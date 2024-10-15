@@ -41,9 +41,9 @@ create table orders(
     ord_no int primary key,
     purch_amt real,
     ord_date date,
-    customer_id int references customers,
-    salesman_id int references salesman
-);
+    customer_id int references customers(customer_id),
+    salesman_id int references salesman(salesman_id)
+    );
 
 
 
@@ -59,32 +59,32 @@ values (70001, 150.5, '2012-10-05', 3005, 5002),
 
 
 
-drop table orders;
-
-
 
 --- 3 ---
 select sum(purch_amt) from orders;
 
 
 --- 4 ---
-select sum(purch_amt)/count(purch_amt) from orders;
+select avg(purch_amt) from orders;
 
 
 --- 5 ---
-select count(cust_name) from customers;
+select count(*) from customers
+    where cust_name is not null;
 
 
 --- 6 ---
-select purch_amt from orders order by purch_amt limit 1;
-
 select min(purch_amt) from orders;
 
 --- 7 ---
-select cust_name from customers where cust_name like '%b';
+select * from customers where cust_name like '%b';
+
+select * from customers where split_part(cust_name, ' ', 1) like '%b';
 
 --- 8 ---
-select * from orders where customer_id in (select customer_id from customers where city = 'New York');
+select * from orders o
+    join customers c on o.customer_id = c.customer_id
+        where c.city = 'New York';
 
 --- 9 ---
 select * from customers
@@ -93,8 +93,12 @@ select * from customers
                                    where purch_amt > 10);
 
 
+select * from customers c
+    join orders o on c.customer_id = o.customer_id
+        where o.purch_amt > 10;
+
 --- 10 ---
-select grade from customers;
+select sum(grade) from customers;
 
 
 --- 11 ---
@@ -102,3 +106,8 @@ select * from customers where cust_name is not null;
 
 --- 12 ---
 select max(grade) from customers;
+
+
+
+
+
